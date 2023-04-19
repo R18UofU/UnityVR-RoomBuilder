@@ -11,7 +11,7 @@ public class PlayerTracker : MonoBehaviour
     private List<string[]> rowData = new List<string[]>();
     float preX, preZ;
     double distance = 0.0f;
-    
+
     [SerializeField]
     Transform origin;
 
@@ -43,6 +43,8 @@ public class PlayerTracker : MonoBehaviour
         string header = "Object Name,Time,PosX,PosY,PosZ,RotX,RotY,RotZ";
         StartCoroutine(WriteToFile(header, false));
         StartCoroutine(WriteToFile(header, true));
+
+        period = FindObjectOfType<RoomManager>().samplingRate;
     }
     void Save()
     {
@@ -57,49 +59,49 @@ public class PlayerTracker : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Time.time > nextActionTime)
-        {
-            nextActionTime += period;
-            float x;
-            float y;
-            float z;
-            //if (IvPort)
-            //{
-            //    x = gameObject.transform.position.x - originX;
-            //    y = gameObject.transform.position.y - originY;
-            //    z = gameObject.transform.position.z - originZ;
-            //}
-            //else
-            //{
-            //    x = gameObject.transform.localPosition.x + parentX;
-            //    y = gameObject.transform.localPosition.y + parentY;
-            //    z = gameObject.transform.localPosition.z + parentZ;
-            //}
+        //if (Time.time > nextActionTime)
+        //{
+        // nextActionTime += period;
+        float x;
+        float y;
+        float z;
+        //if (IvPort)
+        //{
+        //    x = gameObject.transform.position.x - originX;
+        //    y = gameObject.transform.position.y - originY;
+        //    z = gameObject.transform.position.z - originZ;
+        //}
+        //else
+        //{
+        //    x = gameObject.transform.localPosition.x + parentX;
+        //    y = gameObject.transform.localPosition.y + parentY;
+        //    z = gameObject.transform.localPosition.z + parentZ;
+        //}
 
-            x = gameObject.transform.position.x - originX;
-            y = gameObject.transform.position.y - originY;
-            z = gameObject.transform.position.z - originZ;
+        x = gameObject.transform.position.x - originX;
+        y = gameObject.transform.position.y - originY;
+        z = gameObject.transform.position.z - originZ;
 
-            string rx = gameObject.transform.rotation.eulerAngles.x.ToString();
-            string ry = gameObject.transform.rotation.eulerAngles.y.ToString();
-            string rz = gameObject.transform.rotation.eulerAngles.z.ToString();
-            
-            //StartCoroutine(Post(name, Time.time.ToString(), x.ToString(), y.ToString(), z.ToString(), rx, ry, rz));
+        string rx = gameObject.transform.rotation.eulerAngles.x.ToString();
+        string ry = gameObject.transform.rotation.eulerAngles.y.ToString();
+        string rz = gameObject.transform.rotation.eulerAngles.z.ToString();
 
-            string output = name + "," + Time.time.ToString() + "," + x.ToString() + "," + y.ToString() + "," + z.ToString() + "," + rx + "," + ry + "," + rz;
-            StartCoroutine(WriteToFile(output, false));
-        }
+        //StartCoroutine(Post(name, Time.time.ToString(), x.ToString(), y.ToString(), z.ToString(), rx, ry, rz));
+
+        string output = name + "," + Time.time.ToString() + "," + x.ToString() + "," + y.ToString() + "," + z.ToString() + "," + rx + "," + ry + "," + rz;
+        StartCoroutine(WriteToFile(output, false));
+        //}
 
         if (Input.GetKeyDown(KeyCode.T) && !IvPort)
         {
             Debug.Log("SAVE T POSE !!!");
-            float x = gameObject.transform.position.x - originX;
-            float y = gameObject.transform.position.y - originY;
-            float z = gameObject.transform.position.z - originZ;
-            string rx = gameObject.transform.rotation.eulerAngles.x.ToString();
-            string ry = gameObject.transform.rotation.eulerAngles.y.ToString();
-            string rz = gameObject.transform.rotation.eulerAngles.z.ToString();
-            string output = name + "," + Time.time.ToString() + "," + x.ToString() + "," + y.ToString() + "," + z.ToString() + "," + rx + "," + ry + "," + rz;
+            x = gameObject.transform.position.x - originX;
+            y = gameObject.transform.position.y - originY;
+            z = gameObject.transform.position.z - originZ;
+            rx = gameObject.transform.rotation.eulerAngles.x.ToString();
+            ry = gameObject.transform.rotation.eulerAngles.y.ToString();
+            rz = gameObject.transform.rotation.eulerAngles.z.ToString();
+            output = name + "," + Time.time.ToString() + "," + x.ToString() + "," + y.ToString() + "," + z.ToString() + "," + rx + "," + ry + "," + rz;
             StartCoroutine(WriteToFile(output, true));
         }
 
@@ -124,7 +126,7 @@ public class PlayerTracker : MonoBehaviour
             // Open the stream and write to it.
             using (StreamWriter sw = File.AppendText(filePath))
             {
-                sw.WriteLine(output);                
+                sw.WriteLine(output);
             }
         }
         yield return null;
@@ -157,31 +159,31 @@ public class PlayerTracker : MonoBehaviour
 
     private string getPath()
     {
-//#if UNITY_EDITOR
+        //#if UNITY_EDITOR
         RoomManager rm = FindObjectOfType<RoomManager>();
         Tuple<string, string> path = rm.GetPath();
         string m_path = path.Item1 + "/Player Data/";
         Directory.CreateDirectory(m_path);
         return m_path + path.Item2 + name + ".csv";
 
-//#else
-//      return Application.dataPath + "/"+"CurrentInfo.csv";
-//#endif
+        //#else
+        //      return Application.dataPath + "/"+"CurrentInfo.csv";
+        //#endif
     }
 
     private string getTposePath()
     {
-//#if UNITY_EDITOR
-        
+        //#if UNITY_EDITOR
+
         RoomManager rm = FindObjectOfType<RoomManager>();
         Tuple<string, string> path = rm.GetPath();
         string m_path = path.Item1 + "/Player Data/";
         Directory.CreateDirectory(m_path);
         return m_path + path.Item2 + "Tpose.csv";
 
-//#else
-//      return Application.dataPath + "/"+"CurrentInfo.csv";
-//#endif
+        //#else
+        //      return Application.dataPath + "/"+"CurrentInfo.csv";
+        //#endif
     }
 
     IEnumerator Post(string name, string time, string px, string py, string pz, string rx, string ry, string rz)

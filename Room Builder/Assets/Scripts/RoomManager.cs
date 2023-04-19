@@ -35,6 +35,8 @@ public class RoomManager : MonoBehaviour
     public enum SideEnum { Left, Right };
     public SideEnum side;
 
+    public float samplingRate = 0.0f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -52,7 +54,7 @@ public class RoomManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public Tuple<string, string> GetPath()
